@@ -3,6 +3,14 @@ import sys_msgs
 
 assistant_convo = []
 
+def search_or_not():
+    sys_msg = sys_msgs.search_or_not_msg
+
+    response = ollama.chat(
+        model= 'deepseek-r1:8b'
+        messages[{role}]
+    )
+
 def stream_assistant_convo():
     global assistant_convo
     response_stream = ollama.chat(model='deepseek-r1:8b', messages=assistant_convo, stream=True)
