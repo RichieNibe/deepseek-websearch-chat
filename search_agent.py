@@ -1,4 +1,5 @@
 import ollama
+import sys_msgs
 
 assistant_convo = []
 
