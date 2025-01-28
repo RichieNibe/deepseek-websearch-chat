@@ -10,8 +10,8 @@ def search_or_not():
     sys_msg = sys_msgs.search_or_not_msg
 
     response = ollama.chat(
-        model= 'deepseek-r1:8b'
-        messages[{'role': 'system', 'content': sys_msg}, assistant_convo[-1]]
+        model='deepseek-r1:8b',
+        messages=[{'role': 'system', 'content': sys_msg}, assistant_convo[-1]]
     )
 
     content = response['message']['content']
@@ -23,12 +23,12 @@ def search_or_not():
         return False
     
 def query_generator():
-    sys_msgs = sys_msgs.query_msg
-    query_msg = f'CREATE A SEARCH QUERY FOR THIS PROMPT: {assistant_convo[-1]}'
+    sys_msg = sys_msgs.query_msg
+    query_msg = f'CREATE A SEARCH QUERY FOR THIS PROMPT: \n{assistant_convo[-1]}'
 
     response = ollama.chat(
-        model= 'deepseek-r1:8b'
-        messages[{'role': 'system', 'content': sys_msgs}, {'role': 'user', 'content': query_msg}]
+        model='deepseek-r1:8b',
+        messages=[{'role': 'system', 'content': sys_msg}, {'role': 'user', 'content': query_msg}]
     )
 
     return response['message']['content']
@@ -66,14 +66,14 @@ def duckduckgo_search(query):
     return results
 
 def best_search_result(search_results, query):
-    sys_msg = sys_msgs.best_result_msg
+    sys_msg = sys_msgs.best_search_msg
     best_msg = f'SEARCH RESULTS: {search_results}\nUSER PROMPT: {assistant_convo[-1]} \nSEARCH_QUERY: {query}'
 
     for  _ in range(3):
         try:
             response = ollama.chat(
-                model= 'deepseek-r1:8b'
-                messages[{'role': 'system', 'content': sys_msg}, {'role': 'user', 'content': best_msg}]
+                model= 'deepseek-r1:8b',
+                messages=[{'role': 'system', 'content': sys_msg}, {'role': 'user', 'content': best_msg}]
             )
 
             return int(response['message']['content'])
@@ -121,8 +121,8 @@ def contains_data_needed(search_content, query):
     needed_prompt = f'PAGE_TEXT: {search_content}\nUSER_PROMPT: {assistant_convo[-1]}\nSEARCH_QUERY: {query}'
     
     response = ollama.chat(
-        model= 'deepseek-r1:8b'
-        messages[{'role': 'system', 'content': sys_msg}, {'role': 'user', 'content': needed_prompt}]
+        model= 'deepseek-r1:8b',
+        messages=[{'role': 'system', 'content': sys_msg}, {'role': 'user', 'content': needed_prompt}]
     )
 
     content = response['message']['content']

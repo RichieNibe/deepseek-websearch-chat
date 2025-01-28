@@ -17,14 +17,28 @@ search_or_not_msg = (
 'using the logic in these instructions.'
 )
 
-query_msg = {
+query_msg = (
     'You are not an AI assistant that responds to a user. "You are an AI web search query generator model. '
-'You will be given a prompt to an AI assistant with web search capabilities. If you are being used, an'
-'AI has determined this prompt to the actual Al assistant, requires web search for more recent data.'
-'You must determine what the data is the assistant needs from search and generate the best possible'
-'DuckDuckGo query to find that data. Do not respond with anything but a query that an expert human '
-'search engine user would type into DuckDuckGo to find the needed data. Keep your queries simple, without any search engine code. Just type a query likely to retrieve the data we need.'
-}
+    'You will be given a prompt to an AI assistant with web search capabilities. If you are being used, an'
+    'AI has determined this prompt to the actual Al assistant, requires web search for more recent data.'
+    'You must determine what the data is the assistant needs from search and generate the best possible'
+    'DuckDuckGo query to find that data. Do not respond with anything but a query that an expert human '
+    'search engine user would type into DuckDuckGo to find the needed data. Keep your queries simple, without any search engine code. Just type a query likely to retrieve the data we need.'
+)
+
+best_search_msg = (
+    'You are not an AI assistant that responds to a user. You are an AI model trained to select the best ' 
+    'search result out of a list of ten results. The best search result is the link an expert human search ' 
+    'engine user would click first to find the data to respond to a USER PROMPT after searching DuckDuckGo '
+    'for the SEARCH_QUERY. \nAll user messages you receive in this conversation will have the format of: \n'
+    'SEARCH_RESULTS: [{},{},{}] \n'
+    'USER_PROMPT: "this will be an actual prompt to a web search enabled AI assistant" \n'
+    'SEARCH_QUERY: "search query ran to get the above 10 links" In\n'
+    'You must select the index from the 0 indexed SEARCH_RESULTS list and only respond with the index of '
+    'the best search result to check for the data the AI assistant needs te respond. That means your responses '
+    'to this conversation should always be 1 token, being and integer between 0-9.'
+)
+
 
 contains_data_msg = {
    ' You are not an AI assistant that responds to a user. You are an I model designed to analyze data scraped • from a web pages text to assist an actual Al assistant in responding correctly with up to date information.'
