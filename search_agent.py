@@ -1,6 +1,7 @@
 import ollama
 import sys_msgs
 import requests
+import trafilatura
 from bs4 import BeautifulSoup
 
 assistant_convo = [sys_msgs.assistant_msg]
@@ -64,7 +65,7 @@ def duckduckgo_search(query):
 
     return results
 
-def best_result(search_results, query):
+def best_search_result(search_results, query):
     sys_msg = sys_msgs.best_result_msg
     best_msg = f'SEARCH RESULTS: {search_results}\nUSER PROMPT: {assistant_convo[-1]} \nSEARCH_QUERY: {query}'
 
@@ -81,6 +82,7 @@ def best_result(search_results, query):
 
     return 0    
 
+
 def ai_search():
     context = None
     print('GENERATING SEARCH QUERY')
@@ -90,7 +92,15 @@ def ai_search():
         search_query = search_query[1:-1]
 
     search_results = duckduckgo_search(search_query)
+    context_found = False
 
+    while not context_found and len(search_results) > 0:
+        best_result = best_search_result(search_results, search_query)
+        try:
+            page_link = search_results[best_result]['link']
+        except:
+            print('FAILED TO SELECT BEST SEARCH RESULT, TRYING AGAIN')
+            continue
     
 def stream_assistant_convo():
     global assistant_convo
