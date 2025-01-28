@@ -1,5 +1,7 @@
 import ollama
 import sys_msgs
+import requests
+from bs4 import BeautifulSoup
 
 assistant_convo = [sys_msgs.assistant_msg]
 
@@ -30,6 +32,55 @@ def query_generator():
 
     return response['message']['content']
     
+def duckduckgo_search(query):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+    }
+
+    url = f'https://duckduckgo.com/html?q={query}'
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+    results = []
+
+    for i, result in enumerate(soup.find_all('div', class_='result'), start=1):
+        if i > 10:
+            break
+
+        title_tag = result.find('a', class_='result__a')
+        if not title_tag:
+            continue
+
+        link = title_tag['href']
+        snippet_tag = result.find('a', class_='result__snippet')
+        snippet = snippet_tag.text.strip() if snippet_tag else 'No description available'
+
+        results.append({
+            'id': i, 
+            'link': link, 
+            'search_description': snippet
+        })
+
+    return results
+
+def best_result(search_results, query):
+    sys_msg = sys_msgs.best_result_msg
+    best_msg = f'SEARCH RESULTS: {search_results}\nUSER PROMPT: {assistant_convo[-1]} \nSEARCH_QUERY: {query}'
+
+    for  _ in range(3):
+        try:
+            response = ollama.chat(
+                model= 'deepseek-r1:8b'
+                messages[{'role': 'system', 'content': sys_msg}, {'role': 'user', 'content': best_msg}]
+            )
+
+            return int(response['message']['content'])
+        except:
+            continue
+
+    return 0    
+
 def ai_search():
     context = None
     print('GENERATING SEARCH QUERY')
@@ -37,6 +88,8 @@ def ai_search():
 
     if search_query[0] == '"':
         search_query = search_query[1:-1]
+
+    search_results = duckduckgo_search(search_query)
 
     
 def stream_assistant_convo():
