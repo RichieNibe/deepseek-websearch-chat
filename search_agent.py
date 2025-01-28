@@ -82,6 +82,12 @@ def best_search_result(search_results, query):
 
     return 0    
 
+def scrape_webpage(url):
+    try:
+        downloaded = trafilatura.fetch_url(url)
+        return trafilatura.extract(downloaded, include_formatting=True, include_links=True)
+    except Exception as e:
+        return None
 
 def ai_search():
     context = None
@@ -101,7 +107,9 @@ def ai_search():
         except:
             print('FAILED TO SELECT BEST SEARCH RESULT, TRYING AGAIN')
             continue
-    
+        pqge_text = scrape_webpage(page_link)
+        search_results.pop(best_result)
+
 def stream_assistant_convo():
     global assistant_convo
     response_stream = ollama.chat(model='deepseek-r1:8b', messages=assistant_convo, stream=True)
